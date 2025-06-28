@@ -44,9 +44,9 @@ class _IntroScreenState extends State<IntroScreen> {
           ),
           ElevatedButton(
             onPressed: () {},
-            child: Text('Join Now'),
             style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.amber, foregroundColor: Colors.white),
+            child: Text('Join Now'),
           )
         ],
       ),

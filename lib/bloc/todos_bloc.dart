@@ -1,6 +1,9 @@
+// ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todo_with_nodejs/Model/todos_model.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:todo_with_nodejs/services/notif_services.dart';
 
 part 'todos_event.dart';
 part 'todos_state.dart';
@@ -8,13 +11,29 @@ part 'todos_state.dart';
 class TodosBloc extends Bloc<TodosEvent, TodosState> {
   TodosBloc() : super(const TodosState()) {
     _init();
-    on<CreateTodosEvent>((event, emit) {
+    on<CreateTodosEvent>((event, emit) async {
       if (event.todos != null) {
         final updateTodos = List<TodosModel>.from(state.todos)
           ..add(event.todos!);
         emit(state.copyWith(todos: updateTodos));
+
+        if (event.todos!.alarmDate != null) {
+          // Parse String alarmDate
+          final parsedDate = DateTime.tryParse(event.todos!.alarmDate!);
+          if (parsedDate != null && parsedDate.isAfter(DateTime.now())) {
+            final tzDate = tz.TZDateTime.from(parsedDate, tz.local);
+
+            await NotifServices().scheduledNotification(
+              id: event.todos!.dateCreated.hashCode,
+              title: "Reminder: ${event.todos!.title}",
+              body: "Don't forget to complete this task.",
+              scheduledDate: tzDate,
+            );
+          }
+        }
       }
     });
+
     on<CompleteTodoEvent>((event, emit) {
       final updateTodos = List<TodosModel>.from(state.todos);
       var todo = updateTodos[event.index!];
@@ -24,16 +43,51 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
         completed: !(todo.completed ?? false),
       );
       emit(state.copyWith(todos: updateTodos));
+      if (updateTodos[event.index!].completed == true) {
+        NotifServices().cancelNotification(todo.dateCreated.hashCode);
+      } else {
+        if (todo.alarmDate != null) {
+          final alarmDate = DateTime.tryParse(todo.alarmDate!);
+          if (alarmDate != null) {
+            final tzDate = tz.TZDateTime.from(alarmDate, tz.local);
+            NotifServices().scheduledNotification(
+              id: todo.dateCreated.hashCode,
+              title: "Reminder: ${todo.title}",
+              body: "Don't forget to complete this task.",
+              scheduledDate: tzDate,
+            );
+          }
+        }
+      }
     });
 
-    on<EditTodosEvent>((event, emit) {
+    on<EditTodosEvent>((event, emit) async {
       final updateTodos = List<TodosModel>.from(state.todos);
-      updateTodos[event.index!] = event.todos!;
+      final oldTodo = updateTodos[event.index!];
+      final newTodo = event.todos!;
+
+      updateTodos[event.index!] = newTodo;
       emit(state.copyWith(todos: updateTodos));
+
+      if (newTodo.alarmDate != null) {
+        final alarmDate = DateTime.tryParse(newTodo.alarmDate!);
+        if (alarmDate != null) {
+          final tzDate = tz.TZDateTime.from(alarmDate, tz.local);
+          NotifServices().scheduledNotification(
+            id: newTodo.dateCreated.hashCode,
+            title: "Reminder: ${newTodo.title}",
+            body: "Don't forget to complete this task.",
+            scheduledDate: tzDate,
+          );
+          NotifServices().cancelNotification(oldTodo.dateCreated.hashCode);
+        }
+      }
     });
 
     on<DeleteTodosEvent>((event, emit) {
       final updateTodos = List<TodosModel>.from(state.todos);
+      NotifServices()
+          .cancelNotification(updateTodos[event.index!].dateCreated.hashCode);
       updateTodos.removeAt(event.index!);
       emit(state.copyWith(todos: updateTodos));
     });
@@ -77,6 +131,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
       final upTodos = List<TodosModel>.from(state.todos)
         ..add(TodosModel(
             title: 'title $i', dateCreated: DateTime.now().toString()));
+      // ignore: invalid_use_of_visible_for_testing_member
       emit(state.copyWith(todos: upTodos));
     }
   }

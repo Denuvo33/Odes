@@ -17,6 +17,13 @@ class _EditTodosScreenState extends State<EditTodosScreen> {
   DateTime? selectedDateTime;
   final TextEditingController titleController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    super.dispose();
+    titleController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,6 +101,7 @@ class _EditTodosScreenState extends State<EditTodosScreen> {
 
     if (date != null) {
       final time = await showTimePicker(
+        // ignore: use_build_context_synchronously
         context: context,
         initialTime: TimeOfDay.now(),
       );

@@ -15,6 +15,13 @@ class _CreateTodosScreenState extends State<CreateTodosScreen> {
   DateTime? selectedDateTime;
   final TextEditingController titleController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    super.dispose();
+    titleController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +66,7 @@ class _CreateTodosScreenState extends State<CreateTodosScreen> {
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
                       final TodosModel newTodo = TodosModel(
-                        alarmDate: selectedDateTime.toString(),
+                        alarmDate: selectedDateTime!.toIso8601String(),
                         title: titleController.text,
                         dateCreated: DateTime.now().toString(),
                       );
@@ -88,6 +95,7 @@ class _CreateTodosScreenState extends State<CreateTodosScreen> {
 
     if (date != null) {
       final time = await showTimePicker(
+        // ignore: use_build_context_synchronously
         context: context,
         initialTime: TimeOfDay.now(),
       );

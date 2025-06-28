@@ -42,40 +42,40 @@ class TodosScreen extends StatelessWidget {
                             itemBuilder: (context) {
                               return [
                                 PopupMenuItem(
-                                  child: Text('Latest'),
                                   value: 1,
                                   onTap: () {
                                     context
                                         .read<TodosBloc>()
                                         .add(SortTodosEvent(sort: 1));
                                   },
+                                  child: Text('Latest'),
                                 ),
                                 PopupMenuItem(
-                                  child: Text('Newest'),
                                   value: 2,
                                   onTap: () {
                                     context
                                         .read<TodosBloc>()
                                         .add(SortTodosEvent(sort: 2));
                                   },
+                                  child: Text('Newest'),
                                 ),
                                 PopupMenuItem(
-                                  child: Text('Completed'),
                                   value: 3,
                                   onTap: () {
                                     context
                                         .read<TodosBloc>()
                                         .add(SortTodosEvent(sort: 3));
                                   },
+                                  child: Text('Completed'),
                                 ),
                                 PopupMenuItem(
-                                  child: Text('Uncompleted'),
                                   value: 4,
                                   onTap: () {
                                     context
                                         .read<TodosBloc>()
                                         .add(SortTodosEvent(sort: 4));
                                   },
+                                  child: Text('Uncompleted'),
                                 ),
                               ];
                             }),
