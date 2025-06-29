@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_with_nodejs/Screen/edit_todos_scree.dart';
 import 'package:todo_with_nodejs/Screen/full_todos_screen.dart';
-import 'package:todo_with_nodejs/bloc/todos_bloc.dart';
+import 'package:todo_with_nodejs/bloc/todos/todos_bloc.dart';
 
 class TodosScreen extends StatelessWidget {
   const TodosScreen({super.key});

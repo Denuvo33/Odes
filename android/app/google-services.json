@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "805274963759",
+    "project_id": "odes-59f3e",
+    "storage_bucket": "odes-59f3e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:805274963759:android:36b2aa045d7e084f24dbda",
+        "android_client_info": {
+          "package_name": "com.example.todo_with_nodejs"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8tpmOxLxoRYX2dvqizMP26t53YqMQrf8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
