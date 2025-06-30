@@ -13,11 +13,13 @@ class _LoginScreenState extends State<RegistScreen> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final TextEditingController _passwordAgain = TextEditingController();
+  final TextEditingController _username = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
     super.dispose();
+    _username.dispose();
     _email.dispose();
     _password.dispose();
     _passwordAgain.dispose();
@@ -50,7 +52,7 @@ class _LoginScreenState extends State<RegistScreen> {
                       child: Column(
                         children: [
                           Container(
-                            height: 200,
+                            height: 150,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(50),
@@ -80,6 +82,37 @@ class _LoginScreenState extends State<RegistScreen> {
                                       style: TextStyle(
                                           fontSize: 25,
                                           fontWeight: FontWeight.bold),
+                                    ),
+                                    TextFormField(
+                                      controller: _username,
+                                      validator: (value) =>
+                                          value == null || value.isEmpty
+                                              ? 'Please enter your username'
+                                              : null,
+                                      decoration: InputDecoration(
+                                          focusedBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              borderSide: BorderSide(
+                                                  color: Colors.red, width: 2)),
+                                          fillColor: Colors.red,
+                                          enabledBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              borderSide: BorderSide(
+                                                  color: Colors.red, width: 2)),
+                                          contentPadding: EdgeInsets.all(10),
+                                          prefixIcon: Icon(
+                                            Icons.person,
+                                            color: Colors.red,
+                                          ),
+                                          label: Text(
+                                            'Username',
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20))),
                                     ),
                                     TextFormField(
                                       keyboardType: TextInputType.emailAddress,
