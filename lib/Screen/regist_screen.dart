@@ -249,7 +249,9 @@ class _LoginScreenState extends State<RegistScreen> {
                                         TextButton(
                                             onPressed: () {
                                               Navigator.pushNamedAndRemoveUntil(
-                                                  context, '/', (_) => false);
+                                                  context,
+                                                  '/login',
+                                                  (_) => false);
                                             },
                                             child: Text(
                                               'Login',

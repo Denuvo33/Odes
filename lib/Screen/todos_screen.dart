@@ -86,64 +86,69 @@ class TodosScreen extends StatelessWidget {
                       child: ListView.builder(
                         itemCount: state.todos.length,
                         itemBuilder: (context, index) {
-                          return Dismissible(
-                            key: Key(state.todos[index].dateCreated.toString()),
-                            onDismissed: (direction) {
-                              context
-                                  .read<TodosBloc>()
-                                  .add(DeleteTodosEvent(index: index));
-                            },
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => FullTodosScreen(
-                                              title:
-                                                  '${state.todos[index].title}',
-                                              id: index,
-                                            )));
+                          return Container(
+                            margin: const EdgeInsets.all(6),
+                            child: Dismissible(
+                              key: Key(
+                                  state.todos[index].dateCreated.toString()),
+                              onDismissed: (direction) {
+                                context
+                                    .read<TodosBloc>()
+                                    .add(DeleteTodosEvent(index: index));
                               },
-                              child: Card(
-                                color: state.todos[index].completed ?? false
-                                    ? Colors.grey
-                                    : colors[index % colors.length],
-                                child: ListTile(
-                                    leading: IconButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (builder) =>
-                                                    EditTodosScreen(
-                                                        index: index)));
-                                      },
-                                      icon: Icon(
-                                        Icons.edit,
-                                        color: Colors.white,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => FullTodosScreen(
+                                                title:
+                                                    '${state.todos[index].title}',
+                                                id: index,
+                                              )));
+                                },
+                                child: Card(
+                                  color: state.todos[index].completed ?? false
+                                      ? Colors.grey
+                                      : colors[index % colors.length],
+                                  child: ListTile(
+                                      leading: IconButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (builder) =>
+                                                      EditTodosScreen(
+                                                          index: index)));
+                                        },
+                                        icon: Icon(
+                                          Icons.edit,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                    ),
-                                    title: Text(
-                                      softWrap: true,
-                                      maxLines: 4,
-                                      overflow: TextOverflow.ellipsis,
-                                      state.todos[index].title!,
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          decoration: TextDecoration.combine([
-                                            state.todos[index].completed ??
-                                                    false
-                                                ? TextDecoration.lineThrough
-                                                : TextDecoration.none
-                                          ])),
-                                    ),
-                                    trailing: Checkbox(
-                                        value: state.todos[index].completed ??
-                                            false,
-                                        onChanged: (newValue) {
-                                          context.read<TodosBloc>().add(
-                                              CompleteTodoEvent(index: index));
-                                        })),
+                                      title: Text(
+                                        softWrap: true,
+                                        maxLines: 4,
+                                        overflow: TextOverflow.ellipsis,
+                                        state.todos[index].title!,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            decoration: TextDecoration.combine([
+                                              state.todos[index].completed ??
+                                                      false
+                                                  ? TextDecoration.lineThrough
+                                                  : TextDecoration.none
+                                            ])),
+                                      ),
+                                      trailing: Checkbox(
+                                          value: state.todos[index].completed ??
+                                              false,
+                                          onChanged: (newValue) {
+                                            context.read<TodosBloc>().add(
+                                                CompleteTodoEvent(
+                                                    index: index));
+                                          })),
+                                ),
                               ),
                             ),
                           );

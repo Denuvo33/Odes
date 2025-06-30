@@ -35,6 +35,8 @@ class _CreateTodosScreenState extends State<CreateTodosScreen> {
               spacing: 20,
               children: [
                 TextFormField(
+                  minLines: 1,
+                  maxLines: 4,
                   controller: titleController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -66,7 +68,7 @@ class _CreateTodosScreenState extends State<CreateTodosScreen> {
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
                       final TodosModel newTodo = TodosModel(
-                        alarmDate: selectedDateTime!.toIso8601String(),
+                        alarmDate: selectedDateTime?.toIso8601String(),
                         title: titleController.text,
                         dateCreated: DateTime.now().toString(),
                       );

@@ -50,7 +50,7 @@ class _IntroScreenState extends State<IntroScreen> {
                   final pref = await SharedPreferences.getInstance();
                   pref.setString('intro', 'true');
                   if (!context.mounted) return;
-                  Navigator.pushReplacementNamed(context, '/');
+                  Navigator.pushReplacementNamed(context, '/login');
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amber,

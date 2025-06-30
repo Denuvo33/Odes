@@ -20,9 +20,13 @@ class HomeScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Welcome Back, Syahid',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Icon(Icons.person, size: 40),
+                  Expanded(
+                    child: Text(
+                      'Syahid',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
                   ),
                   Row(
                     children: [
@@ -35,12 +39,9 @@ class HomeScreen extends StatelessWidget {
                   )
                 ],
               ),
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
+              Row(
                 children: [
-                  SizedBox(
-                    width: 180,
+                  Expanded(
                     child: InkWell(
                       onTap: () {
                         Navigator.pushNamed(context, '/yourtodos');
@@ -69,8 +70,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: 180,
+                  Expanded(
                     child: InkWell(
                       child: Card(
                         color: const Color.fromARGB(136, 255, 251, 7),
@@ -96,78 +96,78 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: InkWell(
-                      child: Card(
-                        color: Colors.green,
-                        child: Container(
-                          margin: EdgeInsets.all(10),
-                          child: Column(
-                            children: [
-                              Text(
-                                'Interact with Odes',
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                              ),
-                              Icon(
-                                Icons.smart_toy_outlined,
-                                size: 40,
-                                color: Colors.white,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: InkWell(
-                      onTap: () async {
-                        try {
-                          await FirebaseAuth.instance.signOut();
-                          if (!context.mounted) return;
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, '/', (_) => false);
-                        } on FirebaseAuthException catch (e) {
-                          if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                e.toString(),
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      child: Card(
-                        color: Colors.red,
-                        child: Container(
-                          margin: EdgeInsets.all(10),
-                          child: Column(
-                            children: [
-                              Text(
-                                'Logout',
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                              ),
-                              Icon(
-                                Icons.logout,
-                                size: 40,
-                                color: Colors.white,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: InkWell(
+                  child: Card(
+                    color: Colors.green,
+                    child: Container(
+                      margin: EdgeInsets.all(10),
+                      child: Column(
+                        children: [
+                          Text(
+                            'Interact with Odes',
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                          Icon(
+                            Icons.smart_toy_outlined,
+                            size: 40,
+                            color: Colors.white,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: InkWell(
+                  onTap: () async {
+                    try {
+                      await FirebaseAuth.instance.signOut();
+                      if (!context.mounted) return;
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/login', (_) => false);
+                    } on FirebaseAuthException catch (e) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            e.toString(),
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  child: Card(
+                    color: Colors.red,
+                    child: Container(
+                      margin: EdgeInsets.all(10),
+                      child: Column(
+                        children: [
+                          Text(
+                            'Logout',
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                          Icon(
+                            Icons.logout,
+                            size: 40,
+                            color: Colors.white,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

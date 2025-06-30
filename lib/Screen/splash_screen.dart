@@ -14,7 +14,7 @@ class SplashScreen extends StatelessWidget {
     } else {
       FirebaseAuth.instance.currentUser != null
           ? Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false)
-          : Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
+          : Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
     }
   }
 
