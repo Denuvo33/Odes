@@ -215,8 +215,8 @@ class _LoginScreenState extends State<RegistScreen> {
                                         Text('Already have an account?'),
                                         TextButton(
                                             onPressed: () {
-                                              Navigator.pushReplacementNamed(
-                                                  context, '/');
+                                              Navigator.pushNamedAndRemoveUntil(
+                                                  context, '/', (_) => false);
                                             },
                                             child: Text(
                                               'Login',

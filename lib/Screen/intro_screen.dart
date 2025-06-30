@@ -1,5 +1,6 @@
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_with_nodejs/Model/intro_model.dart';
 
 class IntroScreen extends StatefulWidget {
@@ -19,16 +20,17 @@ class _IntroScreenState extends State<IntroScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        spacing: 10,
-        children: [
-          SizedBox(
-            height: 300,
-            child: Swiper(
+      body: SafeArea(
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Swiper(
               itemCount: 3,
               control: SwiperControl(),
-              pagination: SwiperPagination(builder: SwiperPagination.dots),
+              pagination: SwiperPagination(
+                alignment: Alignment.topCenter,
+                builder: SwiperPagination.dots,
+              ),
               itemBuilder: (context, index) {
                 var card = cardList[index];
                 return Card(
@@ -41,14 +43,23 @@ class _IntroScreenState extends State<IntroScreen> {
                 );
               },
             ),
-          ),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.amber, foregroundColor: Colors.white),
-            child: Text('Join Now'),
-          )
-        ],
+            Container(
+              margin: const EdgeInsets.all(20),
+              child: ElevatedButton(
+                onPressed: () async {
+                  final pref = await SharedPreferences.getInstance();
+                  pref.setString('intro', 'true');
+                  if (!context.mounted) return;
+                  Navigator.pushReplacementNamed(context, '/');
+                },
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.amber,
+                    foregroundColor: Colors.white),
+                child: Text('Join Now'),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
