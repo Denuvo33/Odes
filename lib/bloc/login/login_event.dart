@@ -21,10 +21,13 @@ class LoginLogoutButtonPressed extends LoginEvent {
 
 class CreateAccount extends LoginEvent {
   final BuildContext? context;
-  final String email, password;
+  final String email, password, username;
   CreateAccount({
     this.context,
+    required this.username,
     required this.email,
     required this.password,
   });
 }
+
+class FetchUserData extends LoginEvent {}

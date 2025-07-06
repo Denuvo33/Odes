@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "805274963759",
+    "firebase_url": "https://odes-59f3e-default-rtdb.firebaseio.com",
     "project_id": "odes-59f3e",
     "storage_bucket": "odes-59f3e.firebasestorage.app"
   },
@@ -12,7 +13,20 @@
           "package_name": "com.example.todo_with_nodejs"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "805274963759-efqmrdtpvas0kr6puv2oa41h2gjmga8o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.todo_with_nodejs",
+            "certificate_hash": "ccede66d989c52fc159a0519f362261e62cd3e93"
+          }
+        },
+        {
+          "client_id": "805274963759-ljjdr2gqug20jqt2qs0sgl9a8qhoc65a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC8tpmOxLxoRYX2dvqizMP26t53YqMQrf8"
@@ -20,7 +34,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "805274963759-ljjdr2gqug20jqt2qs0sgl9a8qhoc65a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "805274963759-kndu0k8odt2juv761o62vnlrg7ft9f4l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.todoWithNodejs"
+              }
+            }
+          ]
         }
       }
     }

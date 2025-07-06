@@ -7,6 +7,7 @@ import 'package:todo_with_nodejs/Screen/login_screen.dart';
 import 'package:todo_with_nodejs/Screen/regist_screen.dart';
 import 'package:todo_with_nodejs/Screen/splash_screen.dart';
 import 'package:todo_with_nodejs/Screen/todos_screen.dart';
+import 'package:todo_with_nodejs/bloc/login/login_bloc.dart';
 import 'package:todo_with_nodejs/bloc/todos/todos_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_with_nodejs/firebase_options.dart';
@@ -17,10 +18,14 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await NotifServices().init();
-  runApp(BlocProvider(
-    create: (context) => TodosBloc(),
-    child: MyApp(),
-  ));
+  runApp(MultiBlocProvider(providers: [
+    BlocProvider(
+      create: (create) => TodosBloc(),
+    ),
+    BlocProvider(
+      create: (create) => LoginBloc(),
+    ),
+  ], child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -30,8 +35,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: {
-        '/login': (context) => const LoginScreen(),
         '/': (context) => const SplashScreen(),
+        '/login': (context) => const LoginScreen(),
         '/intro': (context) => const IntroScreen(),
         '/yourtodos': (context) => const TodosScreen(),
         '/create': (context) => const CreateTodosScreen(),
