@@ -1,6 +1,9 @@
 // ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 import 'package:todo_with_nodejs/Model/todos_model.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:todo_with_nodejs/services/notif_services.dart';
@@ -10,8 +13,42 @@ part 'todos_state.dart';
 
 class TodosBloc extends Bloc<TodosEvent, TodosState> {
   TodosBloc() : super(const TodosState()) {
-    _init();
+    DatabaseReference db = FirebaseDatabase.instance
+        .ref('users/${FirebaseAuth.instance.currentUser!.uid}');
+    on<GetTodosEvent>((event, emit) async {
+      emit(state.copyWith(isLoading: true));
+      try {
+        await db.once().then((value) {
+          var data = value.snapshot.value;
+          if (data != null && data is Map) {
+            var todosMap = data['todos'];
+            if (todosMap != null && todosMap is Map) {
+              List<TodosModel> todosList = [];
+
+              todosMap.forEach((key, value) {
+                var todo =
+                    TodosModel().fromMap(Map<String, dynamic>.from(value));
+                todosList.add(todo);
+              });
+              emit(state.copyWith(todos: todosList, isLoading: false));
+            }
+          }
+          emit(state.copyWith(isLoading: false));
+        });
+      } catch (e) {
+        state.copyWith(isLoading: false);
+        if (!event.context.mounted) return;
+        ScaffoldMessenger.of(event.context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    });
+
     on<CreateTodosEvent>((event, emit) async {
+      var id = DateTime.now().millisecondsSinceEpoch;
       if (event.todos != null) {
         final updateTodos = List<TodosModel>.from(state.todos)
           ..add(event.todos!);
@@ -31,6 +68,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
             );
           }
         }
+        db.child('todos/$id').update(event.todos!.toMap(id));
       }
     });
 
@@ -43,6 +81,9 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
         completed: !(todo.completed ?? false),
       );
       emit(state.copyWith(todos: updateTodos));
+      db
+          .child('todos/${todo.id}')
+          .update(updateTodos[event.index!].toMap(todo.id!));
       if (updateTodos[event.index!].completed == true) {
         NotifServices().cancelNotification(todo.dateCreated.hashCode);
       } else {
@@ -68,6 +109,9 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
 
       updateTodos[event.index!] = newTodo;
       emit(state.copyWith(todos: updateTodos));
+      db
+          .child('todos/${oldTodo.id}')
+          .update(updateTodos[event.index!].toMap(oldTodo.id!));
 
       if (newTodo.alarmDate != null) {
         final alarmDate = DateTime.tryParse(newTodo.alarmDate!);
@@ -88,6 +132,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
       final updateTodos = List<TodosModel>.from(state.todos);
       NotifServices()
           .cancelNotification(updateTodos[event.index!].dateCreated.hashCode);
+      db.child('todos/${updateTodos[event.index!].id}').remove();
       updateTodos.removeAt(event.index!);
       emit(state.copyWith(todos: updateTodos));
     });
@@ -124,15 +169,5 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
 
       emit(state.copyWith(todos: updateTodos));
     });
-  }
-
-  void _init() {
-    for (var i = 0; i < 9; i++) {
-      final upTodos = List<TodosModel>.from(state.todos)
-        ..add(TodosModel(
-            title: 'title $i', dateCreated: DateTime.now().toString()));
-      // ignore: invalid_use_of_visible_for_testing_member
-      emit(state.copyWith(todos: upTodos));
-    }
   }
 }

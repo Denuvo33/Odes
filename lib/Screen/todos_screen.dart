@@ -4,8 +4,14 @@ import 'package:todo_with_nodejs/Screen/edit_todos_scree.dart';
 import 'package:todo_with_nodejs/Screen/full_todos_screen.dart';
 import 'package:todo_with_nodejs/bloc/todos/todos_bloc.dart';
 
-class TodosScreen extends StatelessWidget {
+class TodosScreen extends StatefulWidget {
   const TodosScreen({super.key});
+
+  @override
+  State<TodosScreen> createState() => _TodosScreenState();
+}
+
+class _TodosScreenState extends State<TodosScreen> {
   final List<Color> colors = const [
     Color.fromARGB(108, 248, 153, 11),
     Color.fromARGB(100, 208, 76, 231),
@@ -17,6 +23,14 @@ class TodosScreen extends StatelessWidget {
     Color.fromARGB(153, 68, 137, 255),
     Color.fromARGB(101, 255, 255, 0)
   ];
+  late final TodosBloc bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    bloc = context.read<TodosBloc>();
+    bloc.add(GetTodosEvent(context: context));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,132 +45,130 @@ class TodosScreen extends StatelessWidget {
       ),
       body: BlocBuilder<TodosBloc, TodosState>(
         builder: (context, state) {
-          return state.todos.isEmpty
-              ? const Center(child: Text('You dont have any todos'))
-              : Column(
-                  children: [
-                    Row(
+          return state.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : state.todos.isEmpty
+                  ? const Center(child: Text('You dont have any todos'))
+                  : Column(
                       children: [
-                        PopupMenuButton(
-                            icon: Icon(Icons.sort_rounded),
-                            itemBuilder: (context) {
-                              return [
-                                PopupMenuItem(
-                                  value: 1,
-                                  onTap: () {
-                                    context
-                                        .read<TodosBloc>()
-                                        .add(SortTodosEvent(sort: 1));
+                        Row(
+                          children: [
+                            PopupMenuButton(
+                                icon: Icon(Icons.sort_rounded),
+                                itemBuilder: (context) {
+                                  return [
+                                    PopupMenuItem(
+                                      value: 1,
+                                      onTap: () {
+                                        bloc.add(SortTodosEvent(sort: 1));
+                                      },
+                                      child: Text('Latest'),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 2,
+                                      onTap: () {
+                                        bloc.add(SortTodosEvent(sort: 2));
+                                      },
+                                      child: Text('Newest'),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 3,
+                                      onTap: () {
+                                        bloc.add(SortTodosEvent(sort: 3));
+                                      },
+                                      child: Text('Completed'),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 4,
+                                      onTap: () {
+                                        bloc.add(SortTodosEvent(sort: 4));
+                                      },
+                                      child: Text('Uncompleted'),
+                                    ),
+                                  ];
+                                }),
+                            Text(state.sortType)
+                          ],
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: state.todos.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                margin: const EdgeInsets.all(6),
+                                child: Dismissible(
+                                  key: Key(state.todos[index].dateCreated
+                                      .toString()),
+                                  onDismissed: (direction) {
+                                    bloc.add(DeleteTodosEvent(index: index));
                                   },
-                                  child: Text('Latest'),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  FullTodosScreen(
+                                                    title:
+                                                        '${state.todos[index].title}',
+                                                    id: index,
+                                                  )));
+                                    },
+                                    child: Card(
+                                      color:
+                                          state.todos[index].completed ?? false
+                                              ? Colors.grey
+                                              : colors[index % colors.length],
+                                      child: ListTile(
+                                          leading: IconButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (builder) =>
+                                                          EditTodosScreen(
+                                                              index: index)));
+                                            },
+                                            icon: Icon(
+                                              Icons.edit,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          title: Text(
+                                            softWrap: true,
+                                            maxLines: 4,
+                                            overflow: TextOverflow.ellipsis,
+                                            state.todos[index].title!,
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                decoration:
+                                                    TextDecoration.combine([
+                                                  state.todos[index]
+                                                              .completed ??
+                                                          false
+                                                      ? TextDecoration
+                                                          .lineThrough
+                                                      : TextDecoration.none
+                                                ])),
+                                          ),
+                                          trailing: Checkbox(
+                                              value: state
+                                                      .todos[index].completed ??
+                                                  false,
+                                              onChanged: (newValue) {
+                                                context.read<TodosBloc>().add(
+                                                    CompleteTodoEvent(
+                                                        index: index));
+                                              })),
+                                    ),
+                                  ),
                                 ),
-                                PopupMenuItem(
-                                  value: 2,
-                                  onTap: () {
-                                    context
-                                        .read<TodosBloc>()
-                                        .add(SortTodosEvent(sort: 2));
-                                  },
-                                  child: Text('Newest'),
-                                ),
-                                PopupMenuItem(
-                                  value: 3,
-                                  onTap: () {
-                                    context
-                                        .read<TodosBloc>()
-                                        .add(SortTodosEvent(sort: 3));
-                                  },
-                                  child: Text('Completed'),
-                                ),
-                                PopupMenuItem(
-                                  value: 4,
-                                  onTap: () {
-                                    context
-                                        .read<TodosBloc>()
-                                        .add(SortTodosEvent(sort: 4));
-                                  },
-                                  child: Text('Uncompleted'),
-                                ),
-                              ];
-                            }),
-                        Text(state.sortType)
+                              );
+                            },
+                          ),
+                        ),
                       ],
-                    ),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: state.todos.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            margin: const EdgeInsets.all(6),
-                            child: Dismissible(
-                              key: Key(
-                                  state.todos[index].dateCreated.toString()),
-                              onDismissed: (direction) {
-                                context
-                                    .read<TodosBloc>()
-                                    .add(DeleteTodosEvent(index: index));
-                              },
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => FullTodosScreen(
-                                                title:
-                                                    '${state.todos[index].title}',
-                                                id: index,
-                                              )));
-                                },
-                                child: Card(
-                                  color: state.todos[index].completed ?? false
-                                      ? Colors.grey
-                                      : colors[index % colors.length],
-                                  child: ListTile(
-                                      leading: IconButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (builder) =>
-                                                      EditTodosScreen(
-                                                          index: index)));
-                                        },
-                                        icon: Icon(
-                                          Icons.edit,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      title: Text(
-                                        softWrap: true,
-                                        maxLines: 4,
-                                        overflow: TextOverflow.ellipsis,
-                                        state.todos[index].title!,
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            decoration: TextDecoration.combine([
-                                              state.todos[index].completed ??
-                                                      false
-                                                  ? TextDecoration.lineThrough
-                                                  : TextDecoration.none
-                                            ])),
-                                      ),
-                                      trailing: Checkbox(
-                                          value: state.todos[index].completed ??
-                                              false,
-                                          onChanged: (newValue) {
-                                            context.read<TodosBloc>().add(
-                                                CompleteTodoEvent(
-                                                    index: index));
-                                          })),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                );
+                    );
         },
       ),
     );

@@ -2,6 +2,11 @@ part of 'todos_bloc.dart';
 
 abstract class TodosEvent {}
 
+class GetTodosEvent extends TodosEvent {
+  BuildContext context;
+  GetTodosEvent({required this.context});
+}
+
 class CreateTodosEvent extends TodosEvent {
   TodosModel? todos;
   CreateTodosEvent({this.todos});

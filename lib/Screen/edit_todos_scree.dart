@@ -74,7 +74,9 @@ class _EditTodosScreenState extends State<EditTodosScreen> {
                                 title: titleController.text,
                                 dateCreated: DateTime.now().toString(),
                                 completed: false,
-                                alarmDate: selectedDateTime.toString(),
+                                alarmDate: selectedDateTime == null
+                                    ? ''
+                                    : selectedDateTime!.toString(),
                               ),
                             ),
                           );
